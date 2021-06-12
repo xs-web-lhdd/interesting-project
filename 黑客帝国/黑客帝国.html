@@ -1,0 +1,225 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TheMatrix</title>
+    <style>
+        html, body, canvas {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+        #options {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            padding: 1.5em;
+            transform: translate(-50%, -50%);
+            border-radius: 3em;
+            font-size: 1.2em;
+            font-family: Consolas;
+            color: white;
+            background: rgba(177, 224, 255, 0.5);
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+            box-shadow: rgba(177, 224, 255, 0.7) 0px 0px 16px, rgba(177, 224, 255, 0.5) 0px 0px 12px inset;
+            -webkit-animation: op_in 1s;
+            animation: op_in 1s;
+            display: none;
+        }
+        #options.OPTIONS-OUT {
+            -webkit-animation: op_out 0.8s forwards;
+            animation: op_out 0.8s forwards;
+        }
+        #options > p, #options > span, #options > div {
+            margin: 1em 0;
+            display: flex;
+        }
+        #options > p, #options > div {
+            justify-content: space-around;
+        }
+        #options > span {
+            justify-content: flex-end;
+        }
+        #options > p {
+            font-size: 2em;
+            color: #7FF;
+        }
+        #options input {
+            width: 12em;
+            margin-left: 0.5em;
+            border: none;
+            outline: none;
+            font-size: 1em;
+            font-family: Consolas;
+            color: #73D7FF;
+            background: transparent;
+            text-shadow: 0 0 3px rgba(115, 215, 255, 0.7);
+        }
+        #options button {
+            padding: 0.5em 1em;
+            border-radius: 2em;
+            font-size: 1em;
+            border: 1px groove #6EF;
+            color: #E0FFFF;
+            background: rgba(102, 238, 255, 0.1);
+            box-shadow: 0 0 2px #6EF, 0 0 2px #6EF inset;
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.7);
+            outline: none;
+            transition: 0.3s;
+        }
+        #options button:active {
+            border-style: inset;
+            color: #FFF;
+            background: rgba(102, 238, 255, 0.45);
+            box-shadow: 1px 2px 6px #6EF, -1px -2px 6px #6EF inset;
+        }
+        @-webkit-keyframes op_in {
+            from { transform: translate(-50%, -50%) scale(1.25); opacity: 0; }
+            to  { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        @keyframes op_in {
+            from { transform: translate(-50%, -50%) scale(1.25); opacity: 0; }
+            to  { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        @-webkit-keyframes op_out {
+            from  { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            to { transform: translate(-50%, -50%) scale(1.25); opacity: 0; }
+        }
+        @keyframes op_out {
+            from  { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            to { transform: translate(-50%, -50%) scale(1.25); opacity: 0; }
+        }
+    </style>
+    </head>
+    <body>
+    <canvas></canvas>
+    <div id="options">
+        <p>TheMatrix</p>
+        <span>FPS: <input type="text" value="auto"></span>
+        <span>Font size: <input type="text" value="10"></span>
+        <span>Font Color: <input type="text" value="rgb(0, 255, 0)"></span>
+        <span>Background color: <input type="text" value="rgb(0, 0, 0)"></span>
+        <div><button>Default</button><button>Light</button><button>Blue</button><button>Red</button></div>
+    </div>
+    
+    <script>
+        function TheMatrix (config, fps, fsize, color, bgcolor) {
+            var t = this, el, g, rgb = function (hex, name, ori) {
+                var res = [0, 0, 0], not; hex = String(hex);
+                if(/^#?[\da-f]{3}([\da-f]([\da-f]{2}([\da-f]{2})?)?)?$/i.test(hex)) {
+                    var h = hex.replace(/^#/, "").toLowerCase(); var len = h.length;
+                    for (var x, i = 0, v = "0123456789abcdef"; i < ((len == 4 || len == 8) ? 4 : 3); i++) {
+                        x = (len == 3 || len == 4) ? h.substr(i*1, 1) + h.substr(i*1, 1) : h.substr(i*2, 2);
+                        res[i] = v.indexOf(x.substr(0, 1)) * 16 + v.indexOf(x.substr(1, 1));
+                        if (i == 3) res[i] = Math.round(res[i] / 255 * 100) / 100;
+                    }
+                } else {
+                    var r = hex.match(/^(rgba?\()?(\d*\.?\d+), *(\d*\.?\d+), *(\d*\.?\d+)(, *(\d*\.?\d+))?\)?$/i);
+                    if (r) { res = [Number(r[2]), Number(r[3]), Number(r[4])]; if (r[6]) res.push(Number(r[6])) }
+                    else not = true;
+                }
+                if (not && ori) return ori;
+                else if (name) {
+                    if (!Array.isArray(name)) name = [name];
+                    res = name[0] + "(" + res.join(name[1] != void 0 ? name[1] : ", ") + ")";
+                }
+                return res;
+            };
+            if (config instanceof HTMLElement) el = config;
+            else if (typeof config === "object") {
+                el = config.el, fps = config.FPS || config.fps, fsize = config.fontSize,
+                color = config.fontColor || config.color, bgcolor = config.backgroundColor || config.bgcolor;
+            }
+            t.state = { position: [] }; t.options = {
+                element: el,
+                FPS: fps || "auto",
+                fontSize: fsize || 10,
+                fontColor: rgb(color, "rgb", "rgb(0, 255, 0)"),
+                backgroundColor: rgb(bgcolor, "rgb", "rgb(0, 0, 0)")
+            };
+            g = el.getContext("2d");
+            el.style.background = "black";
+            el.width = parseInt(window.getComputedStyle(el).width);
+            el.height = parseInt(window.getComputedStyle(el).height);
+            for (var p = 0; p < parseInt(el.width / t.options.fontSize); p++) t.state.position[p] = 0;
+            var kfFN1 = function (n) {
+                    window.setTimeout(n, 1000 / t.options.FPS);
+                    return t.state.frame++ > 0 ? t.state.frame++ : 0;
+                },
+                kfFN2 = window.requestAnimationFrame || window.webkitRequestAnimationFrame ||
+                    window.mozRequestAnimationFrame || window.oRequestAnimationFrame ||
+                    window.msRequestAnimationFrame || function (n) {
+                        window.setTimeout(n, 1000 / 60);
+                        return t.state.frame++ > 0 ? t.state.frame++ : 0;
+                    };
+            t.frameStart = function () {
+                if (t.running == true) return;
+                var kFrame = t.options.FPS > 0 ? kfFN1 : kfFN2;
+                var frame = function () {
+                    if (t.running === false) return;
+                    var bg = rgb(t.options.backgroundColor = rgb(t.options.backgroundColor, "rgb", "rgb(0, 0, 0)"));
+                    g.fillStyle = "rgba(" + bg[0] + ", " + bg[1] + ", " + bg[2] + ", 0.05)";
+                    g.fillRect(0, 0, el.width, el.height);
+                    g.fillStyle = t.options.fontColor = rgb(t.options.fontColor, "rgb", "rgb(0, 255, 0)");
+                    g.font = t.options.fontSize + "px Consolas";
+                    var len = parseInt(el.width / t.options.fontSize), tlen = t.state.position.length;
+                    if (len != tlen) {
+                        if (len < tlen) t.state.position.splice(tlen);
+                        else if (len > tlen)
+                        for (var p = tlen; p < parseInt(el.width / t.options.fontSize); p++) t.state.position[p] = 0;
+                    }
+                    t.state.position.forEach(function (v, i) {
+                        g.fillText(String.fromCharCode(parseInt(Math.random() * (90 - 65) + 65)), i * t.options.fontSize, v);
+                        t.state.position[i] = Math.random() < 0.02 ? 0 : v + t.options.fontSize;
+                    })
+                    kFrame = t.options.FPS > 0 ? kfFN1 : kfFN2;
+                    t.state.frame = kFrame(frame);
+                };
+                t.running = true, kFrame(frame);
+            };
+            t.frameStart();
+        }
+    
+        var canvas = document.querySelector("canvas"),
+            inputs = document.getElementsByTagName("input"),
+            button = document.getElementsByTagName("button");
+        var tm = new TheMatrix(canvas);
+        canvas.onclick = function () { tm.running ? tm.running = false : tm.frameStart() };
+        canvas.ondblclick = function () {
+            var oldClick = this.onclick, op = document.getElementById("options");
+            if (op.style.display == "block") return;
+            op.classList.remove("OPTIONS-OUT");
+            op.style.display = "block";
+            this.onclick = function () {
+                op.classList.add("OPTIONS-OUT");
+                setTimeout(function () { op.style.display = "none", op.classList.remove("OPTIONS-OUT") }, 810);
+                this.onclick = oldClick;
+            }
+        }
+        inputs[0].oninput = inputs[0].onchange = function (e) {
+            if (this.value == "" && e.type == "input") return;
+            var val = this.value.replace(/[^\d]/g, "");
+            val = val != "" ? (Number(val) > 0 ? Number(val) : "auto") : (e.type == "change" ? "auto" : "");
+            tm.options.FPS = this.value = val;
+        };
+        inputs[1].oninput = inputs[1].onchange = function (e) {
+            if (this.value == "" && e.type == "input") return;
+            tm.options.fontSize = this.value = Number(this.value.replace(/[^\d]/g, ""));
+        };
+        inputs[2].oninput = inputs[2].onchange = function (e) {
+            if (this.value == "" && e.type == "input") return;
+            tm.options.fontColor = this.value = this.value == "" ? "rgb(0, 255, 0)" : this.value;
+        };
+        inputs[3].oninput = inputs[3].onchange = function (e) {
+            if (this.value == "" && e.type == "input") return;
+            tm.options.backgroundColor = this.value = this.value == "" ? "rgb(0, 0, 0)" : this.value;
+        };
+    
+        [["auto", 10, "#0F0", "#000"], ["auto", 12, "#333", "#FFF"],
+        [30, 14, "#08F", "#002"], [30, 12, "#B00", "#100"]].forEach(function (v, i) {
+            button[i].onclick = function () {
+                tm.options.FPS = inputs[0].value = v[0];
+                tm.options.fontSize = inputs[1].value = v[1];
+                tm.options.fontColor = inputs[2].value = v[2];
+                tm.options.backgroundColor = inputs[3].value = v[3];
+            }
+        });
+    </script>
+    </body>
+    </html>
