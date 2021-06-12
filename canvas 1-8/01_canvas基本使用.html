@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="mycanvas" width="300px" height="400px">
+        当前浏览器不支持，请升级浏览器
+    </canvas>
+
+    <script>
+        // 得到canvas画布
+        var canvas = document.getElementById('mycanvas');
+        console.log(canvas);
+        // 得到画布的上下文，上下文有两个，2d和3d的上下文
+        // 所有图形绘制都是通过ctx属性或者 . 方法设置的，与canvas标签无关了
+        var ctx = canvas.getContext('2d'); 
+        // 设置颜色
+        ctx.fillStyle = 'green';
+        // 绘制矩形：
+        ctx.fillRect(100,100,200,50); // 向右 向下 宽 高
+
+        // 注意：设置颜色要在绘制图形前边，否则图形颜色不会显示
+        // 错误代码：
+        // var canvas = document.getElementById('mycanvas');
+        // console.log(canvas);
+        // var ctx = canvas.getContext('2d');
+        // ctx.fillRect(100,100,200,50);
+        // ctx.fillStyle = 'green';
+
+    </script>
+</body>
+</html>

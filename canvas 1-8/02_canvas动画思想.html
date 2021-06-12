@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="mycanvas" width="600" height="600">
+        你的浏览器不支持canvas，请换浏览器
+    </canvas>
+
+    <script>
+        // 得到画布：
+        var canvas = document.getElementById('mycanvas');
+        // console.log(canvas);
+        // 获取上下文
+        ctx = canvas.getContext('2d');
+        // 填充颜色
+        ctx.fillStyle = 'blue';
+        // 设置信号量
+        var left = 100;
+        setInterval(function(){
+            // 清除画布 0 0 代表从什么地方开始清除，600 600 代表清除的宽高
+            ctx.clearRect(0,0,600,600);
+            // 更新信号量
+            left++;
+            ctx.fillRect(left,100,100,100);
+        },3)
+    </script>
+</body>
+</html>

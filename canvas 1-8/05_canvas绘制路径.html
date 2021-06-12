@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <canvas id="mycanvas" width="600" height="600">
+        你的浏览器不支持canvas，请更换浏览器
+    </canvas>
+    <script>
+        var canvas = document.getElementById('mycanvas');
+        var ctx = canvas.getContext('2d');
+        // 绘制路径：
+            // 绘制路径作用是为了设置一个不规则的都多边形状态
+            // 路径都是闭合的，使用路径进行绘制的时候需要既定的步骤
+            // 需要设置路径的起点
+            // 使用绘制命令画出路径
+            // 封闭路径
+            // 填充或者绘制已经封闭路径的形状
+
+
+        // 创建一个路径：
+        ctx.beginPath();
+        // 移动绘制点：
+        ctx.moveTo(100,100); // 开始的点的位置
+        // 描述行进路径：
+        ctx.lineTo(200,200);
+        ctx.lineTo(400,180);
+        ctx.lineTo(380,50);
+        // 封闭路径：
+        // ctx.closePath();
+        // 绘制不规则图形：
+        ctx.strokeStyle = 'red';
+        ctx.stroke(); // 描边
+        // 填充：
+        // ctx.fillStyle = 'green';
+        // ctx.fill();
+    </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <canvas id="mycanvas" width="600" height="600">
+        你的浏览器不支持canvas，请更换浏览器
+    </canvas>
+    <script>
+        // MDN：
+        // https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes
+
+        var canvas = document.getElementById('mycanvas');
+        var ctx = canvas.getContext('2d');
+        // 创建一个路径：
+        ctx.beginPath();
+        ctx.arc(200,200,100,0,2*Math.PI,false);
+        ctx.stroke();
+
+        // 笑脸案例：
+        function draw() {
+            var canvas = document.getElementById('mycanvas');
+            if (canvas.getContext){
+                var ctx = canvas.getContext('2d');
+                
+                ctx.beginPath();
+                ctx.arc(75, 75, 50, 0, Math.PI * 2, true); // 绘制
+                ctx.moveTo(110, 75);
+                ctx.arc(75, 75, 35, 0, Math.PI, false);   // 口(顺时针)
+                ctx.moveTo(65, 65);
+                ctx.arc(60, 65, 5, 0, Math.PI * 2, true);  // 左眼
+                ctx.moveTo(95, 65);
+                ctx.arc(90, 65, 5, 0, Math.PI * 2, true);  // 右眼
+                ctx.stroke();
+            }
+        }
+        draw();
+    </script>
+</body>
+</html>

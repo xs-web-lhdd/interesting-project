@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #mycanvas{
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <button id="btn1">绘制矩形</button>
+    <button id="btn2">绘制矩形边框</button>
+    <button id="btn3">擦除画布</button>
+    <br/>
+    <canvas id="mycanvas" width="600" height="600">
+        你的浏览器不支持canvas，请更换浏览器
+    </canvas>
+
+    <script>
+        var btn1 = document.getElementById('btn1');
+        var btn2 = document.getElementById('btn2');
+        var btn3 = document.getElementById('btn3');
+        var canvas = document.getElementById('mycanvas');
+        var ctx = canvas.getContext('2d');
+
+        // 绘制矩形：(填充矩形)
+        btn1.addEventListener('click',function(){
+            // 填充颜色：
+            ctx.fillStyle = 'red';
+            // 绘制矩形：
+            ctx.fillRect(100,100,100,100);
+            // 绘制边框：
+        })
+
+        // 绘制矩形边框：
+        btn2.addEventListener('click',function(){
+            // 设置边框颜色：
+            ctx.strokeStyle = 'green';
+            // 绘制矩形边框：
+            ctx.strokeRect(300,100,100,100);
+            // 绘制边框：
+        })
+
+        // 擦除画布：
+        btn3.addEventListener('click',function(){
+            ctx.clearRect(0,0,600,600);
+        })
+
+
+
+
+
+    </script>
+</body>
+</html>
