@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #myecharts{
+            width: 600px;
+            height: 600px;
+            border: 1px solid #000;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="myecharts"></div>
+
+    <script src="./echarts.min.js"></script>
+    <script>
+
+        // 1、打开术语速查手册
+        // 2、移动到要学系的地方
+        // 3、点击右方配置项即可
+
+
+
+        // 1、初始化：
+        const main = document.getElementById('myecharts');
+        console.log(main);
+        const echart1 = echarts.init(main);
+
+        // 2、配置项：
+        option = {
+            // 标题：
+            title:{
+                text:'大前端',              // 主标题
+                subtext:'web-echarts',     // 副标题
+                left:'center',             // 标题位置
+                textStyle:{
+                    color:'red',
+                    fontSize:30,
+                    fontWeight:'800'
+                }
+            },
+            // 
+            grid:{
+                top:300
+            },
+            // x轴
+            xAxis:{
+                data:['html','css','js']
+            },
+            // y轴
+            yAxis:{
+                name:'数量',
+                splitNumber:4,
+                // minInterval:400
+                maxInterval:50
+            },
+            // 用来过滤系列，配合系列名字使用
+            legend:{
+                data:['人数','贡献'],
+                top:100,
+                left:100
+            },
+            series:[
+                {
+                    name:'人数',
+                    type:'bar',
+                    data:[500,1000,300],
+                    markPoint:{
+                        data:[
+                            {type:'max'},
+                            {type:'min'}
+                        ],
+                        itemStyle:{
+                            color:'red'
+                        }
+                    }
+                },
+                {
+                    name:'贡献',
+                    type:'bar',
+                    data:[400,800,600]
+                }
+            ],
+            // 工具栏
+            toolbox:{
+                feature:{
+                    // 下载图片
+                    saveAsImage:{},
+                    // 改数据
+                    dataView:{},
+                    // 复原数据
+                    restore:{},
+                    // 放大缩小
+                    dataZoom:{},
+                    // 数据形式
+                    magicType:{
+                        type:['line','bar','stack','tiled']
+                    }
+                }
+            },
+            // 提示框：
+            tooltip:{
+                trigger:'axis'
+            }
+        }
+
+
+        // 3、
+        echart1.setOption(option);
+    </script>
+</body>
+</html>
