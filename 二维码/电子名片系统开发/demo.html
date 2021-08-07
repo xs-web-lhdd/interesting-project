@@ -1,0 +1,130 @@
+<!doctype html><!--声明文档类型：html-->
+<html lang="en">
+	<head><!--头部-->
+		<meta charset="UTF-8"><!--字符编码:utf-8国际编码-->
+		<meta name="Keywords" content="关键词1,关键词2"><!--关键词-->
+		<meta name="Description" content="描述"><!--描述-->
+		<title>电子名片系统-兮夜老师</title><!--网页标题-->
+		<style>/* css样式 */
+			*{/* 通配符: 选择到所有的标签元素 */
+				margin:0;/*外边距*/
+				padding:0;/*内边距*/
+			}
+			body{/* 标签选择器 */
+				background:url("images/1.jpg");
+				background-position:center top;/*背景定位:左右 上下*/
+			}
+			.content{
+				width:950px;
+				margin:auto;
+			}
+			#wrap{/* # id选择器*/
+				float:left;
+				width:480px;/* 宽度 */
+				height:280px;/* 高度 */
+				/*background:#933;*/
+				margin:100px;
+
+			}
+			#wrap p{/*混合选择器*/
+				float:left;
+				width:200px;
+				height:40px;
+				border-radius:5px;/*圆角属性*/
+				color:#fff;/*文字的颜色*/
+				margin:20px 20px;
+				overflow:hidden;/*超出隐藏*/
+				text-align:center;
+				line-height:40px;
+			}
+			#wrap p span{/*行内元素 : 设置宽高无效*/
+				/*display:block;块元素占一行*/
+				float:left;
+				width:50px;
+				height:40px;
+				background:#333;
+				/*text-align:center;文本左右居中*
+				line-height:40px;/*行高*/
+				
+			}
+			#wrap p input{
+				float:left;
+				width:150px;
+				height:40px;
+				border:0;
+				background:#000;
+				color:#fff;
+				outline:none;/*轮廓*/
+				text-indent:10px;/*首行缩进*/
+			}
+			#qrcode{
+				float:left;/*左浮动:与父元素的左端对齐 依次的往右端显示*/
+				width:260px;
+				height:260px;
+				border:1px solid red;/*边框线:宽度 类型(实心) 颜色*/
+				margin-top:110px;/*上外边距100px*/
+			}
+			p#btn{/*选择器选择到越详细优先级越高*/
+				width:450px;
+				background:#6c0;
+				cursor:pointer;/*鼠标手的形状*/
+			}
+		</style>
+	</head>
+	<body><!--身体-->
+		<!--div盒子模型标签 宽度 高度 位置 背景 边框(css样式)-->
+		<div class="content">
+		<div id="wrap"><!--id="自定义的名称" 命名规范(见名知意:用有语义的英文单词)-->
+			<p><!--段落标签-->
+				<span>姓名:</span>
+				<input type="text" id="name">
+			</p>
+			<p>
+				<span>公司:</span>
+				<input type="text" id="company">
+			</p>
+			<p>
+				<span>职务:</span>
+				<input type="text" id="job">
+			</p>
+			<p>
+				<span>地址:</span>
+				<input type="text" id="adress">
+			</p>
+			<p>
+				<span>QQ:</span>
+				<input type="text" id="moblie">
+			</p>
+			<p>
+				<span>备注:</span>
+				<input type="text" id="desc">
+			</p>
+			<p id="btn">
+				开启通讯录
+			</p>
+		</div>
+		<div id="qrcode"></div>
+		</div>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/qrcode.js"></script>
+		<script type="text/javascript">
+			var name='', company='',job='',adress='',moblie='',desc='';
+			//特效思维:什么元素 触发 什么事件 实现 什么效果
+			$("#btn").click(function(){//点击实现什么功能
+				//alert("注意点，你点到我了")
+				//获取值
+				name = "FN:" + $("#name").val() + "\n";//获取值
+				company = "ORG:" + $("#company").val() + "\n";
+				job = "TITLE:" + $("#job").val() + "\n";
+				adress = "WORK:" + $("#adress").val() + "\n";
+				moblie = "TEL:" + $("#moblie").val() + "\n";
+				desc = "NOTE:" + $("#desc").val() + "\n";
+				var info ="BEGIN:VCARD\n" + name + company + job + adress + moblie + desc + "END:VCARD";
+				//console.log(info);//在控制台输出
+				//生成二维码
+				var qrcode = new QRCode("qrcode");
+				qrcode.makeCode(info);
+			});
+		</script>
+	</body>
+</html>
