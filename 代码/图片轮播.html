@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>js图片爆炸效果</title>
+	<link rel="stylesheet" href="">
+	<style>
+		body {
+			overflow: hidden;
+			background-color: #000;
+		}
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		#box {
+			width: 640px;
+			height:400px;
+			position:absolute;
+			left:50%;
+			top:50%;
+			margin-left: -320px;
+			margin-top: -200px;
+			border:1px solid #000;
+		}
+		#box>div {
+			position:absolute;
+			left: 0;
+			top:0;
+			width:100%;
+			height:100%;
+			transform-style:preserve-3d;
+		}
+		#box>div>div {
+			position:absolute;
+			transform:preserve-3d;
+		}
+	</style>
+</head>
+<body>
+	<div id="box"></div>
+	<script>
+		// 图片
+		var imgs = ["img/1.jpg","img/2.jpg","img/3.jpg","img/4.jpg","img/5.jpg","img/6.jpg"];
+		//z-index的值
+		var z = 999999;
+		//显示第几张图片
+		var index = 0;
+		var box = document.getElementById('box')
+
+		boom(10,10)
+		//l 传进来几行；t传进来几列;
+		function boom(l,t) {
+			//创建一个新的div
+			var oParentNode = document.createElement("div");
+			//设置z-index的值
+			oParentNode.style.zIndex = z;
+			z--;
+			box.appendChild(oParentNode);
+
+			var x = l,y = t;
+			for(var i = 0; i < y;i++){
+				for(var j = 0;j<x;j++){
+					//创建碎片
+					var oDiv = document.createElement("div");
+					//添加背景图片
+					oDiv.style.background = "url("+imgs[index]+")";
+					oDiv.style.width = box.clientWidth / x + 'px';
+					oDiv.style.height = box.clientHeight / y + 'px';
+					oDiv.style.left = (box.clientWidth / x) * j +'px';
+					oDiv.style.top = (box.clientHeight / y) * i +'px';
+					oDiv.style.backgroundPositionX = (box.clientWidth/ x)* -j + 'px';
+					oDiv.style.backgroundPositionY= (box.clientHeight/y)* -i + 'px';
+					oDiv.style.transition = (Math.random()*1+0.5)+"s";
+					oParentNode.appendChild(oDiv);
+
+				}
+			};
+
+
+			var allDiv = oParentNode.children;
+			setTimeout(()=>{
+				index++;
+				index == imgs.length && (index = 0);
+
+				boom(l,t);
+				for(var i= 0;i<allDiv.length;i++){
+					allDiv[i].style.transform = 'perspective(800px) rotateX('+ (Math.random()*500-250)+'deg) rotateY('+(Math.random()*500-250)+'deg) translateX('+(Math.random()*500-250)+'px) translateY('+(Math.random()*500-250)+'px) translateZ('+(Math.random()*1000-500)+'px)'
+					allDiv[i].style.opacity = 0;
+				};
+			},2000);
+
+			setTimeout(function(){
+				oParentNode.remove();
+			},3500)
+
+		}
+	</script>					
+</body>
+</html>
