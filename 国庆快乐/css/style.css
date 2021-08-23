@@ -1,0 +1,171 @@
+*{ padding:0;margin:0;list-style-type:none;}
+html, body {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  font-size: 1.5vmin;
+  overflow:hidden;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-container {
+  position: relative;
+  text-align: center;
+}
+
+.btn {
+  height: 4rem;
+  width: 30rem;
+  background: #fff;
+  border: #B31C31 solid 0.125rem;
+  border-radius: 0.625rem;
+  color: #39386E;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 3rem;
+}
+
+.btn:hover {opacity: 0.6}
+
+/* Fireworks */
+@-webkit-keyframes explosion {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  33% {
+    width: 0px;
+    opacity: 0;
+  }
+  34% {
+    width: 0.625rem;
+    opacity: 1.0;
+  }
+  40% {
+    width: 5rem;
+    opacity: 1.0;
+  }
+  to {
+    width: 5.625rem;
+    opacity: 0;
+  }
+}
+
+@-moz-keyframes explosion {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  33% {
+    width: 0;
+    opacity: 0;
+  }
+  34% {
+    width: 0.625rem;
+    opacity: 1.0;
+  }
+  40% {
+    width: 5rem;
+    opacity: 1.0;
+  }
+  to {
+    width: 5.625rem;
+    opacity: 0;
+  }
+}
+
+#stage {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  background-color: #000028;
+}
+
+.launcher {
+  position: absolute;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-duration: 4s;
+  -moz-animation-iteration-count: infinite;
+  background: #fff;
+  border-bottom: 0.1875rem solid yellow;
+}
+
+.launcher div {
+  position: absolute;
+  opacity: 0;
+  left: 0.1875rem;
+  top: 0.1875rem;
+  width: 0.625rem;
+  height: 0.25rem;
+  border-right: 0.25rem solid yellow;
+  border-radius: 0.125rem;
+  -webkit-animation-name: explosion;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-name: explosion;
+  -moz-animation-duration: 4s;
+  -moz-animation-iteration-count: infinite;
+  -webkit-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+}
+
+@media(max-width: 500px) {
+  .container {
+    max-width: 80vw;
+    max-height: 100vh;
+    margin: 0 auto;
+  }
+}
+
+
+/* 五星红旗 */
+#flag_bg{ margin:10px; height:410px; width:750px; background:#FF0000; position:relative; }
+#big_star{ height:104px;  width:104px; background:#FFFF00; position:absolute; top:60px; left:50px; }
+.big_tool{ background:#FF0000; height:40px; width:60px; position:absolute; }
+#angle_a{ top:-12px; left:-13px; -moz-transform: rotate(20deg); -webkit-transform: rotate(20deg); -ms-transform: rotate(20deg); }
+#angle_aa{ top:-3px; left:-23px; }
+#angle_b{ top:-12px; right:-13px; -moz-transform: rotate(-20deg); -webkit-transform: rotate(-20deg); -ms-transform: rotate(-20deg); }
+#angle_bb{ top:-3px; right:-23px; }
+#angle_c{ top:39px; left:-34px; -moz-transform: rotate(34deg); -webkit-transform: rotate(34deg); -ms-transform: rotate(34deg);}
+#angle_d{ top:39px; right:-34px; -moz-transform: rotate(-33deg); -webkit-transform: rotate(-33deg); -ms-transform: rotate(-33deg); }
+#angle_e{ top:49px; left:-35px; -moz-transform: rotate(23deg); -webkit-transform: rotate(23deg); -ms-transform: rotate(23deg); }
+#angle_f{ top:87px; left:9px; -moz-transform: rotate(-35deg); -webkit-transform: rotate(-35deg); -ms-transform: rotate(-35deg); }
+#angle_g{ top:47px; right:-34px; -moz-transform: rotate(-23deg); -webkit-transform: rotate(-23deg); -ms-transform: rotate(-23deg); }
+#angle_h{ top:86px; right:8px; -moz-transform: rotate(35deg); -webkit-transform: rotate(35deg); -ms-transform: rotate(35deg); }
+#angle_i{ height:20px; width:20px; top:85px; left:-5px; }
+#angle_j{ height:20px; width:20px; top:85px; right:-4px; }
+.small_star{ height:104px; width:104px; background:#FFFF00; position:absolute; }
+.small_star .small_tool{ background:#FF0000; height:40px; width:60px; position:absolute; overflow:hidden; }
+.small_star .angle_a{ top:-12px; left:-4px; -moz-transform: rotate(20deg); -webkit-transform: rotate(20deg); -ms-transform: rotate(20deg); }
+.small_star .angle_aa{ top:-3px; left:-14px; }
+.small_star .angle_b{ top:-12px; right:-4px; -moz-transform: rotate(-20deg); -webkit-transform: rotate(-20deg); -ms-transform: rotate(-20deg); }
+.small_star .angle_bb{ top:-3px; right:-14px; }
+.small_star .angle_c{ top:24px; left:-22px; -moz-transform: rotate(34deg); -webkit-transform: rotate(34deg); -ms-transform: rotate(34deg); }
+.small_star .angle_d{ top:24px; right:-22px; -moz-transform: rotate(-33deg); -webkit-transform: rotate(-33deg); -ms-transform: rotate(-33deg); }
+.small_star .angle_e{ top:32px; left:-20px; -moz-transform: rotate(20deg); -webkit-transform: rotate(20deg); -ms-transform: rotate(20deg); }
+.small_star .angle_f{ top:60px; left:9px; -moz-transform: rotate(-35deg); -webkit-transform: rotate(-35deg); -ms-transform: rotate(-35deg); }
+.small_star .angle_g{ top:31px; right:-20px; -moz-transform: rotate(-20deg); -webkit-transform: rotate(-20deg); -ms-transform: rotate(-20deg); }
+.small_star .angle_h{ top:60px; right:8px; -moz-transform: rotate(35deg); -webkit-transform: rotate(35deg); -ms-transform: rotate(35deg); }
+.small_star .angle_i{ height:45px; width:115px; top:65px; left:-5px; }
+.small_star .angle_j{ height:45px; width:25px; top:65px; right:-4px; }
+#flag_bg .star{ height:40px; width:40px; position:relative; overflow:hidden; }
+#one{ top:20px; left:160px; }
+#two{ top:35px; left:194px; }
+#three{ top:60px; left:190px; }
+#four{ top:65px; left:145px; }
+#small_one,#small_two,#small_three,#small_four{ margin-left:-30px; margin-top:-24px; }
