@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Coalesce 16 - Sol 2</title>
+  
+  
+  
+      <link rel="stylesheet" href="css/style.css">
+
+  
+</head>
+
+<body>
+
+  <script src="js/three.min.js"></script>
+<script id="vertexShaderParticle" type="x-shader/x-vertex">
+    uniform vec2 u_resolution;
+    uniform vec2 u_mouse;
+    uniform float u_time;
+    uniform sampler2D u_noise;
+    attribute vec2 reference;
+    uniform sampler2D texturePosition;
+    uniform bool u_clicked;
+    varying float v_op;
+    varying vec2 v_ref;
+  
+  
+  float random(vec2 st) {
+    return fract(sin(dot(st,
+                         vec2(12.9898,78.233)))*
+        43758.5453123);
+  }
+  
+  vec2 hash2(vec2 p)
+  {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0).xy;
+    return o;
+  }
+    void main() {
+      vec3 position = texture2D(texturePosition, reference).xyz;
+      position *= 3.;
+      // position -= 10.;
+
+      vec3 transformed = vec3( position );
+      
+      vec4 mvpos = modelViewMatrix * vec4( transformed, 1.0 );
+
+      // gl_PointSize = 30.0 * (1.0 / (mvpos.z * mvpos.z));
+      // gl_PointSize = 1.;
+      // gl_PointSize = clamp(2. - length(transformed) * .01, 0., 2.);
+      float r = random(reference);
+      r *= r * r * r;
+      gl_PointSize = r * 500. * (1. / length(mvpos.xyz) * 5.51);
+      v_op = r;
+      // gl_PointSize = 2.;
+      gl_Position = projectionMatrix * mvpos;
+      v_ref = sin(reference.xy * 100.) * .3;
+    }
+</script>
+<script id="fragmentShaderParticle" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform sampler2D u_noise;
+    varying vec2 v_ref;
+  uniform bool u_clicked;
+    varying float v_op;
+
+  vec2 hash2(vec2 p)
+  {
+    vec2 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xy;
+    return o;
+  }
+
+  void main() {
+    // vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.x, u_resolution.y);
+    vec2 uv = gl_PointCoord.xy - .5;
+    
+    vec3 particlecolour = vec3(.8 + v_ref.x, .8, 1. + v_ref.y).zxy;
+    vec3 outercolour = vec3(-1.);
+    
+    float l = length(uv);
+    vec3 colour = mix(outercolour, particlecolour, smoothstep(.5, 0.2, l)) - .5;
+    colour = mix(colour, particlecolour*10., smoothstep(.02,.01,l));
+
+    gl_FragColor = vec4(colour*.02 * (1. / v_op), 1.);
+  }
+</script>
+<script id="fragmentShaderVelocity" type="x-shader/x-fragment">
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+  uniform float u_time;
+  uniform float u_mousex;
+    varying float v_op;
+  
+  // otaviogood's noise from https://www.shadertoy.com/view/ld2SzK
+  const float nudge = 0.739513;	// size of perpendicular vector
+  float normalizer = 1.0 / sqrt(1.0 + nudge*nudge);	// pythagorean theorem on that perpendicular to maintain scale
+  float SpiralNoiseC(vec3 p)
+  {
+      float n = 0.0;	// noise amount
+      float iter = 1.0;
+      for (int i = 0; i < 8; i++)
+      {
+          // add sin and cos scaled inverse with the frequency
+          n += -abs(sin(p.y*iter) + cos(p.x*iter)) / iter;	// abs for a ridged look
+          // rotate by adding perpendicular and scaling down
+          p.xy += vec2(p.y, -p.x) * nudge;
+          p.xy *= normalizer;
+          // rotate on other axis
+          p.xz += vec2(p.z, -p.x) * nudge;
+          p.xz *= normalizer;
+          // increase the frequency
+          iter *= 1.733733;
+      }
+      return n;
+  }
+  mat4 rotationMatrix(vec3 axis, float angle)
+  {
+      axis = normalize(axis);
+      float s = sin(angle);
+      float c = cos(angle);
+      float oc = 1.0 - c;
+
+      return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                  oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                  oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                  0.0,                                0.0,                                0.0,                                1.0);
+  }
+  
+  vec3 hash33(vec3 p) {
+    return fract(vec3(
+      sin(p.x) * 43543.454354,
+      sin(p.y) * 7531.154354,
+      sin(p.z) * 10053.75315
+    ));
+  }
+
+  void main() {
+    vec2 uv = gl_FragCoord.xy / resolution.xy;
+    vec3 position = texture2D(v_samplerPosition, uv).xyz;
+    vec3 velocity = texture2D(v_samplerVelocity, uv).xyz;
+    vec3 acceleration = vec3(0.);
+    
+    float l = length(position);
+    position = ( vec4(position, 1.) * rotationMatrix(vec3(sin(u_time * 5.), cos(u_time * 10.), sin(u_time) * cos(u_time * 5.)), .5 + 10. / l) ).xyz;
+    // float s = sin(5./l);
+    // float c = cos(5./l);
+    // position.zy *= mat2(c, -s, s, c);
+    // position.xy *= mat2(c, -s, s, c);
+    vec3 spherical = vec3(1./l, atan(position.y, position.x), acos(position.z / l));
+    float n = SpiralNoiseC(spherical * 6. + u_time * 20.);
+    // n = SpiralNoiseC(vec3(l, spherical.y * 6. + u_time * 5., spherical.z));
+    // n = fract(n) * 3.;
+    
+    // spherical *= 1. + n;
+    // spherical.z += (1. / n-.5)*length(velocity);
+    // spherical.y += n;
+    
+    float a =  n * .1 + smoothstep(8. + sin(u_time*5.) * 3., 60., l) * 20.;
+    
+    acceleration.x = spherical.x * sin(spherical.z) * cos(spherical.y) * a;
+    acceleration.y = spherical.x * sin(spherical.z) * sin(spherical.y) * a;
+    acceleration.z = spherical.x * cos(spherical.z) * a;
+    
+    vec3 vel = velocity * .99 + acceleration * (1.+n);
+    
+    vel += (hash33(position) - .5) * 0.1;
+    
+    if(length(vel) > 10.) {
+      vel = normalize(vel) * 10.;
+    }
+    
+    gl_FragColor = vec4(vel, 1.0);
+    // gl_FragColor = vec4(-.1);
+  }
+</script>
+<script id="fragmentShaderPosition" type="x-shader/x-fragment">
+  uniform float delta;
+  uniform float u_time;
+  uniform sampler2D v_samplerPosition_orig;
+  uniform sampler2D u_noise;
+
+  vec3 hash3(vec2 p)
+  {
+    vec3 o = texture2D( u_noise, (p+0.5)/256.0, -100.0 ).xyz;
+    return o;
+  }
+  void main() {
+    vec2 uv = gl_FragCoord.xy / resolution.xy;
+    vec3 position_original = texture2D(v_samplerPosition_orig, uv).xyz;
+    vec3 position = texture2D(v_samplerPosition, uv).xyz;
+    vec3 velocity = texture2D(v_samplerVelocity, uv).xyz;
+    
+    vec3 pos = position + velocity * delta;
+    
+    if(length(pos) > 40.) {
+      pos = pos / length(pos);
+    }
+
+    gl_FragColor = vec4(pos, 1.0);
+  }
+</script>
+
+
+<div id="container" touch-action="none"></div>
+  <script src='js/GPUComputationRenderer.js'></script>
+<script src='js/OrbitControls.js'></script>
+<script src='js/ccapture.js'></script>
+
+  
+
+    <script  src="js/index.js"></script>
+
+
+
+
+</body>
+
+</html>
